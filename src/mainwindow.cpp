@@ -2073,6 +2073,8 @@ void MainWindow::updateRSSI(float value)
 void MainWindow::updateSampleRate()
 {
     int samp_rate = ui->sampleRateBox->currentText().toInt();
+//    samp_rate = 1920000;
+//      samp_rate = 15360000;
     _settings->rx_sample_rate = samp_rate;
     ui->plotterFrame->setSampleRate(samp_rate);
     ui->plotterFrame->setSpanFreq((quint32)samp_rate);
