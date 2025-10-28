@@ -775,7 +775,7 @@ void MainWindow::saveUiConfig()
     _settings->dmr_source_id = ui->lineEditDMRSourceID->text().toInt();
     _settings->dmr_destination_id = ui->lineEditDMRDestinationID->text().toInt();
     _settings->dmr_timing_correction = ui->lineEditDMRTimingCorrection->text().toInt();
-    _settings->saveConfig();
+//    _settings->saveConfig();
 }
 
 void MainWindow::addDisplayChannel(radiochannel *chan, int r)
@@ -1048,7 +1048,7 @@ void MainWindow::editMemoryChannel(QTableWidgetItem* item)
 
 void MainWindow::saveMemoryChannels()
 {
-    _radio_channels->saveConfig();
+//    _radio_channels->saveConfig();
 }
 
 
