@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: BSL-1.0
 // Copyright Lime Microsystems Apache 2.0 License
 
+#include <QCoreApplication>
+#include <QFile>
 #include <SoapySDR/Device.hpp>
 #include <lime/ConnectionRegistry.h>
 #include <iostream>
@@ -12,6 +14,28 @@
 
 int findSoapyDevices(const std::string &argStr, const bool sparse, QList<QString> &devices)
 {
+
+//   devices.push_back("soapy=0,device=JupiterSDR,driver=jupitersdr,label=JupiterSDRip:10.48.69.129,uri=ip:10.48.69.129");
+//   devices.push_back("soapy=1,device=JupiterSDR,driver=jupitersdr,label=JupiterSDRip:10.48.69.137,uri=ip:10.48.69.137");
+
+   QString filePath(QCoreApplication::applicationDirPath() + "/devices.txt");
+   QFile file(filePath);
+
+   std::cout << "Try file: " << filePath.toStdString() << std::endl;
+   if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+       std::cout << "Found file: " << filePath.toStdString() << std::endl;
+       while (!file.atEnd()) {
+           QString line = file.readLine();
+           line = line.trimmed();
+           std::cout <<"Found device from file: " << line.toStdString() << std::endl;
+           devices.push_back(line);
+       }
+       return EXIT_SUCCESS;
+   }
+   else {
+       std::cout << "Could not open file: " << filePath.toStdString() << std::endl;
+   }
+
     const auto results = SoapySDR::Device::enumerate(argStr);
     if (sparse)
     {
