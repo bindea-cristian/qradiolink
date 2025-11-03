@@ -38,7 +38,7 @@ void VideoEncoder::init(QString device_name)
     Q_UNUSED(device_name);
     if(_init)
         return;
-    //_logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
+    _logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
     _image_capture->init();
     _init = true;
 }
@@ -88,6 +88,12 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_set_defaults(&cinfo);
     jpeg_set_quality(&cinfo, 10, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
+
+
+
+//    pactl load-module module-null-sink sink_name=FakeOutput
+//    pactl load-module module-null-source source_name=FakeMic
+
 
     unsigned char tmprowbuf[320 * 3];
 

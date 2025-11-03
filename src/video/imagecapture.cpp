@@ -60,6 +60,7 @@ void ImageCapture::init()
     _capture->setBufferFormat(QVideoFrame::Format_RGB24);
     _capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
     QObject::connect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
+    QObject::connect(_capture, SIGNAL(imageAvailable(int,QImage)), this, SLOT(process_image_available(int,QImage)));
     QImageEncoderSettings encoding_settings;
     encoding_settings.setResolution(320, 240);
     encoding_settings.setCodec("");
@@ -119,28 +120,39 @@ void ImageCapture::deinit()
 
 void ImageCapture::capture_image()
 {
+    _logger->log(Logger::LogLevelInfo, "TRY CAPTURE IMAGE");
     _mutex.lock();
     if((!_inited) || (_shutdown) || (_capturing))
     {
+        _logger->log(Logger::LogLevelInfo, "CLOSING....");
         _mutex.unlock();
         return;
     }
 
+    _logger->log(Logger::LogLevelInfo, "CAPTURE IMAGE");
     _capturing = true;
     _camera->searchAndLock();
     _capture->capture();
     _camera->unlock();
     _capturing = false;
     _mutex.unlock();
+    _logger->log(Logger::LogLevelInfo, "===========================DONE CAPTURE IMAGE");
+}
+
+void ImageCapture::process_image_available(int id, QImage img)
+{
+    _logger->log(Logger::LogLevelInfo, QString("Image AVAILABLE, WITH ID: %1").arg(id));
 }
 
 void ImageCapture::process_image(int id, QImage img)
 {
-    Q_UNUSED(id);
+//    Q_UNUSED(id);
+    _logger->log(Logger::LogLevelInfo, QString("Image captured, now processing %1").arg(id));
     img = img.convertToFormat(QImage::Format_RGB888);
     unsigned char *data = (unsigned char*)img.bits();
     _last_frame_length = img.sizeInBytes();
     memcpy(_videobuffer, data, _last_frame_length);
+    _logger->log(Logger::LogLevelInfo, QString("Image captured, done processing lastframelen  %1 ").arg(_last_frame_length));
 }
 
 unsigned char* ImageCapture::get_frame(int &len)
