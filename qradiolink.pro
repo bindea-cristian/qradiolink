@@ -11,7 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += multimediawidgets
 TARGET = qradiolink
 TEMPLATE = app
 
+
 CONFIG  += qt thread qtaudio
+CONFIG  += opengl
+CONFIG  += debug
 
 #QMAKE_CXXFLAGS += -Werror
 QMAKE_CXXFLAGS += $$(CXXFLAGS)
