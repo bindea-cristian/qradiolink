@@ -1,0 +1,2 @@
+soapy=0,device=JupiterSDR,driver=jupitersdr,label=JupiterSDRip:,uri=ip:
+soapy=1,device=JupiterSDR,driver=jupitersdr,label=JupiterSDRip:,uri=ip:
