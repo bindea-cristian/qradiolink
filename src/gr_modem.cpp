@@ -337,6 +337,23 @@ const QMap<std::string,QVector<int>> gr_modem::getRxGainNames() const
     }
 }
 
+
+//const QVector<QVector<int>> gr_modem::getGainRange() const
+//{
+//    if(_gr_demod_base)
+//        auto gain_name_map = _gr_demod_base->get_gain_names();
+//        for (auto gain_range : gain_name_map) {
+//            for (int i = 0; i < gain_range.size(); i++) {
+
+//            }
+//        }
+//    else
+//    {
+//        QMap<std::string,QVector<int>> none;
+//        return none;
+//    }
+//}
+
 const QMap<std::string,QVector<int>> gr_modem::getTxGainNames() const
 {
     if(_gr_mod_base)
