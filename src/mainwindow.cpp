@@ -265,8 +265,8 @@ MainWindow::MainWindow(Settings *settings, Logger *logger, RadioChannels *radio_
     _video_img = new QPixmap;
     _constellation_img = new QImage(300,300, QImage::Format_ARGB32);
     _vu_meter_img = new QPixmap(300,20);
-    _realFftData = new float[1048576];
-    _iirFftData = new float[1048576];
+    _realFftData = new float[1048576/2];//1048576];
+    _iirFftData = new float[1048576/2];
     _sampleDataReal = new std::vector<float>;
     _sampleDataImag = new std::vector<float>;
     _s_meter_bg = new QPixmap(":/res/s-meter-bg-black-small.png");
@@ -587,9 +587,14 @@ void MainWindow::setConfig()
     ui->audioInputComboBox->setCurrentText(_settings->audio_input_device);
     ui->audioOutputComboBox->setCurrentText(_settings->audio_output_device);
     ui->txGainDial->setValue(_settings->tx_power);
+    ui->txGainDial->setMaximum(0);
+    ui->txGainDial->setMinimum(-41);
     ui->digitalGainSlider->setValue(_settings->bb_gain);
     ui->rxGainSlider->setValue(_settings->if_gain);
-    ui->rxGainDial->setValue(_settings->rx_sensitivity);
+    ui->rxGainDial->setValue(_settings->if_gain);
+    ui->rxGainDial->setMaximum(34);
+    ui->rxGainDial->setMinimum(0);
+
     ui->rxSquelchDial->setValue(_settings->squelch);
     ui->rxVolumeDial->setValue(_settings->rx_volume);
     ui->micGainSlider->setValue(_settings->tx_volume);
@@ -610,6 +615,9 @@ void MainWindow::setConfig()
     ui->plotterFrame->setSpanFreq((quint32)_settings->rx_sample_rate);
     ui->plotterFrame->setPandapterRange(_settings->panadapter_min_db, _settings->panadapter_max_db);
     ui->plotterFrame->setWaterfallRange(_settings->panadapter_min_db, _settings->panadapter_max_db);
+
+    ui->sampleRateBox->addItem(QString::number(_settings->rx_sample_rate));
+
     ui->sampleRateBox->setCurrentIndex(ui->sampleRateBox->findText
                                        (QString::number(_settings->rx_sample_rate)));
     ui->timeSampleRateBox->setCurrentIndex(ui->timeSampleRateBox->findText
@@ -1592,6 +1600,11 @@ void MainWindow::toggleRXwin(bool value)
     emit setSampleRate(ui->sampleRateBox->currentText().toInt());
     emit setSampleRateTimeDomain(ui->timeSampleRateBox->currentText().toInt());
     emit setTimeDomainFilter(ui->spinBoxTimeFilterWidth->value());
+
+
+
+    ui->rxGainDial->setMaximum(34);
+    ui->rxGainDial->setMinimum(0);
     emit toggleRX(value);
     ui->plotterFrame->setRunningState(value);
     ui->timePlotter->setRunningState(value);
@@ -1613,6 +1626,8 @@ void MainWindow::toggleTXwin(bool value)
         errorDialog.exec();
         return;
     }
+    ui->txGainDial ->setMaximum(0);
+    ui->txGainDial->setMinimum(-41);
     emit toggleTX(value);
 }
 

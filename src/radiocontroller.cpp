@@ -2007,6 +2007,12 @@ void RadioController::toggleRX(bool value)
         _modem->enableTimeDomain((bool)_settings->show_time_domain);
         _modem->setTimeDomainSampleRate(_settings->time_domain_sample_rate);
         _modem->setSampleWindow(_settings->time_domain_sample_speed);
+
+        //set gain range in ui
+
+//        _modem->get_gain_range();
+
+
         _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
         const QMap<std::string,QVector<int>> rx_gains = _modem->getRxGainNames();

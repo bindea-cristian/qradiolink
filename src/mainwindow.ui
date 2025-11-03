@@ -90,12 +90,13 @@
          <font>
           <family>Sans Serif</family>
           <pointsize>10</pointsize>
+          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -389,6 +390,7 @@ background-color: #1F1D1D;</string>
                 <font>
                  <family>Sans Serif</family>
                  <pointsize>9</pointsize>
+                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -400,76 +402,6 @@ background-color: #1F1D1D;</string>
                 <string notr="true">font: 9pt &quot;Sans Serif&quot;;
 </string>
                </property>
-               <item>
-                <property name="text">
-                 <string>1000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>2000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>3000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>4000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>5000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>6000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>7000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>8000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>9000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>10000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>20000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>30000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>40000000</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>50000000</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item>
@@ -1061,6 +993,7 @@ padding-right:15px;</string>
                 <font>
                  <family>Monospace</family>
                  <pointsize>9</pointsize>
+                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -1493,6 +1426,7 @@ background-color: #4a5053</string>
                    <font>
                     <family>Sans Serif</family>
                     <pointsize>9</pointsize>
+                    <weight>50</weight>
                     <italic>false</italic>
                     <bold>false</bold>
                    </font>
@@ -2701,6 +2635,7 @@ color: rgb(0, 67, 98);</string>
                 <font>
                  <family>Sans Serif</family>
                  <pointsize>10</pointsize>
+                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -3080,6 +3015,7 @@ font: 10pt &quot;Sans Serif&quot;;
              <font>
               <family>Sans Serif</family>
               <pointsize>10</pointsize>
+              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
@@ -3498,6 +3434,7 @@ font: 10pt &quot;Sans Serif&quot;;
                        <font>
                         <family>Sans Serif</family>
                         <pointsize>12</pointsize>
+                        <weight>50</weight>
                         <italic>false</italic>
                         <bold>false</bold>
                        </font>
@@ -5515,6 +5452,7 @@ background-color: rgb(255, 0, 0);</string>
           <font>
            <family>Sans Serif</family>
            <pointsize>8</pointsize>
+           <weight>50</weight>
            <italic>false</italic>
            <bold>false</bold>
           </font>
@@ -5573,6 +5511,7 @@ background-color: rgb(255, 0, 0);</string>
           <font>
            <family>Sans Serif</family>
            <pointsize>8</pointsize>
+           <weight>50</weight>
            <italic>false</italic>
            <bold>false</bold>
           </font>
@@ -6894,6 +6833,7 @@ background-color: rgb(150, 150, 150);
              <font>
               <family>Sans Serif</family>
               <pointsize>14</pointsize>
+              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
@@ -6960,6 +6900,7 @@ color: #FF0000;</string>
              <font>
               <family>Sans Serif</family>
               <pointsize>9</pointsize>
+              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
@@ -6999,6 +6940,7 @@ color: #FF0000;</string>
              <font>
               <family>Sans Serif</family>
               <pointsize>9</pointsize>
+              <weight>50</weight>
               <italic>false</italic>
               <bold>false</bold>
              </font>
@@ -7242,6 +7184,7 @@ font: 14pt &quot;Sans Serif&quot;;
                 <font>
                  <family>Sans Serif</family>
                  <pointsize>12</pointsize>
+                 <weight>50</weight>
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
@@ -7298,7 +7241,7 @@ font: 14pt &quot;Sans Serif&quot;;
      <x>0</x>
      <y>0</y>
      <width>1500</width>
-     <height>29</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

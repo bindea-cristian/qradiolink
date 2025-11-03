@@ -1308,7 +1308,7 @@ void gr_demod_base::set_samp_rate(int samp_rate)
 
     int decimation = (int) _samp_rate / INTERNAL_DEFAULT_SAMPLE_RATE;
 
-    if(_samp_rate >= 2000000)
+    if(_samp_rate > 2000000)
     {
         try
         {
