@@ -42,6 +42,7 @@ signals:
     void imageCaptured(unsigned char *image, int size);
 
 public slots:
+    void process_img_error(int id, QCameraImageCapture::Error error, const QString &errorString);
         void process_image_available(int id, QImage img);
     void process_image(int id, QImage img);
     unsigned char* get_frame(int &len);

@@ -15,7 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "radiocontroller.h"
-
+#include <QElapsedTimer>
 
 RadioController::RadioController(Settings *settings, Logger *logger,
                                  RadioChannels *radio_channels, QObject *parent) :
@@ -489,6 +489,7 @@ void RadioController::flushRadioToVoipBuffer()
 
 bool RadioController::processMixerQueue()
 {
+    _logger->log(Logger::LogLevelInfo, "4 ==== Process mixer queue");
     int maximum_frame_size = _settings->udp_enabled ? 1600 : 960;
     if(_audio_mixer_in->buffers_available(maximum_frame_size))
     {
@@ -542,6 +543,9 @@ bool RadioController::processMixerQueue()
 void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
                               int vad, bool radio_only)
 {
+    QElapsedTimer timer;
+    timer.start();
+    _logger->log(Logger::LogLevelInfo, "2 == RadioContoller TxAudio");
     /// first check the other places we need to send it
     if(_settings->vox_enabled)
     {
@@ -679,13 +683,13 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
         emit audioData(encoded_audio,packet_size);
     }
 
+    _logger->log(Logger::LogLevelInfo, "2 == END RadioContoller::TxAudio " + QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 
 void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
-
-    _logger->log(Logger::LogLevelInfo, "======= Start processVideoFrame");
+    _logger->log(Logger::LogLevelInfo, "3 === Start processVideoFrame");
     QElapsedTimer timer;
     timer.start();
 
@@ -745,7 +749,7 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
     }
 
     emit videoData(videobuffer,max_video_frame_size);
-     _logger->log(Logger::LogLevelInfo, "== Done Process video frame:  " +  QString::number(timer.nsecsElapsed()) + "ns");
+     _logger->log(Logger::LogLevelInfo, "3 === Done Process video frame:  " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 void RadioController::processInputNetStream()

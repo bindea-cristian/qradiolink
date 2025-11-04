@@ -53,14 +53,14 @@ void VideoEncoder::deinit()
 
 void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, unsigned long max_video_frame_size)
 {
-    _logger->log(Logger::LogLevelInfo, "== Start Encoding");
+    _logger->log(Logger::LogLevelInfo, "4 ==== Start encode_jpeg");
     QElapsedTimer timer;
     timer.start();
     int len = 0;
     unsigned char *frame = _image_capture->get_frame(len);
     if(len < 1)
     {
-        _logger->log(Logger::LogLevelCritical,"== Encode jpeg len < 1 " );
+        _logger->log(Logger::LogLevelCritical,"4 ==== Encode jpeg len < 1 " );
         encoded_size = 0;
         return;
     }
@@ -104,11 +104,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     JSAMPROW row_pointer[1];
     row_pointer[0] = &tmprowbuf[0];
 
-
-    int i=0;
-    std::cout<<"vine i:"<<std::endl;
     while (cinfo.next_scanline < cinfo.image_height) {
-        i++;
         /*
         unsigned i, j;
         unsigned offset = cinfo.next_scanline * cinfo.image_width * 2; //offset to the correct row
@@ -124,18 +120,17 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
         row_pointer[0] = &input[cinfo.next_scanline * 320 * 3];
         jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
-     std::cout<<"gata i : " << i<<std::endl;
 
     jpeg_finish_compress(&cinfo);
     if(encoded_size > max_video_frame_size)
     {
         encoded_size = max_video_frame_size;
-        _logger->log(Logger::LogLevelInfo, "== encoded_size > max_video_frame_size");
+        _logger->log(Logger::LogLevelCritical, "4 ==== encoded_size > max_video_frame_size");
     }
     memcpy(videobuffer, outbuf, encoded_size);
     jpeg_destroy_compress(&cinfo);
     delete[] frame;
-    _logger->log(Logger::LogLevelInfo, "== Done Encoding JPEG:  " +  QString::number(timer.nsecsElapsed()) + "ns");
+    _logger->log(Logger::LogLevelInfo, "4 ==== Done Encoding JPEG:  " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 
