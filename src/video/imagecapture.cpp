@@ -15,6 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "imagecapture.h"
+#include <QElapsedTimer>
 #define FRAME_SIZE 230400 // 320 x 240 x 3 (RGB)
 
 ImageCapture::ImageCapture(Settings *settings, Logger *logger, QObject *parent) : QObject(parent)
@@ -63,8 +64,11 @@ void ImageCapture::init()
     QObject::connect(_capture, SIGNAL(imageAvailable(int,QImage)), this, SLOT(process_image_available(int,QImage)));
     QImageEncoderSettings encoding_settings;
     encoding_settings.setResolution(320, 240);
+
+    _logger->log(Logger::LogLevelCritical, QString("Current setting: bufferFormat:  ") + _capture->bufferFormat());
+
     encoding_settings.setCodec("");
-    //encoding_settings.setQuality(QMultimedia::VeryLowQuality);
+    encoding_settings.setQuality(QMultimedia::VeryLowQuality);
     _capture->setEncodingSettings(encoding_settings);
     //QWidget *w = QApplication::activeWindow();
     //_viewfinder = new QCameraViewfinder(w);
@@ -120,39 +124,40 @@ void ImageCapture::deinit()
 
 void ImageCapture::capture_image()
 {
-    _logger->log(Logger::LogLevelInfo, "TRY CAPTURE IMAGE");
+    _logger->log(Logger::LogLevelInfo, "==== TRY CAPTURE IMAGE ");
+    QElapsedTimer timer;
+    timer.start();
     _mutex.lock();
     if((!_inited) || (_shutdown) || (_capturing))
     {
-        _logger->log(Logger::LogLevelInfo, "CLOSING....");
+        _logger->log(Logger::LogLevelInfo, "==== CLOSING CAPTURE IMAGE....");
         _mutex.unlock();
         return;
     }
-
-    _logger->log(Logger::LogLevelInfo, "CAPTURE IMAGE");
+    _logger->log(Logger::LogLevelInfo, "==== CAPTURE IMAGE");
     _capturing = true;
     _camera->searchAndLock();
     _capture->capture();
     _camera->unlock();
     _capturing = false;
     _mutex.unlock();
-    _logger->log(Logger::LogLevelInfo, "===========================DONE CAPTURE IMAGE");
+    _logger->log(Logger::LogLevelInfo, "==== DONE CAPTURE IMAGE " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 void ImageCapture::process_image_available(int id, QImage img)
 {
-    _logger->log(Logger::LogLevelInfo, QString("Image AVAILABLE, WITH ID: %1").arg(id));
+    _logger->log(Logger::LogLevelInfo, QString("==== Image AVAILABLE, WITH ID: %1").arg(id));
 }
 
 void ImageCapture::process_image(int id, QImage img)
 {
 //    Q_UNUSED(id);
-    _logger->log(Logger::LogLevelInfo, QString("Image captured, now processing %1").arg(id));
+    _logger->log(Logger::LogLevelInfo, QString("==== Image captured, now processing %1").arg(id));
     img = img.convertToFormat(QImage::Format_RGB888);
     unsigned char *data = (unsigned char*)img.bits();
     _last_frame_length = img.sizeInBytes();
     memcpy(_videobuffer, data, _last_frame_length);
-    _logger->log(Logger::LogLevelInfo, QString("Image captured, done processing lastframelen  %1 ").arg(_last_frame_length));
+    _logger->log(Logger::LogLevelInfo, QString("==== Image captured, done processing lastframelen  %1 ").arg(_last_frame_length));)
 }
 
 unsigned char* ImageCapture::get_frame(int &len)
@@ -160,12 +165,15 @@ unsigned char* ImageCapture::get_frame(int &len)
     if(!_inited)
     {
         len = 0;
+        _logger->log(Logger::LogLevelInfo, "= Get frame error");
         return nullptr;
     }
     capture_image();
     len = _last_frame_length;
-    if(len == 0)
+    if(len == 0){
+        _logger->log(Logger::LogLevelInfo, "= Get frame error2");
         return nullptr;
+    }
     unsigned char* frame = new unsigned char[FRAME_SIZE];
     memcpy(frame, _videobuffer, FRAME_SIZE*sizeof(unsigned char));
     return frame;

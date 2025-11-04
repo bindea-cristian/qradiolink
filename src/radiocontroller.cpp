@@ -684,6 +684,11 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 
 void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
+
+    _logger->log(Logger::LogLevelInfo, "======= Start processVideoFrame");
+    QElapsedTimer timer;
+    timer.start();
+
     if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || (!_settings->tx_started))
     {
         delete[] audio_buffer;
@@ -740,6 +745,7 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
     }
 
     emit videoData(videobuffer,max_video_frame_size);
+     _logger->log(Logger::LogLevelInfo, "== Done Process video frame:  " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 void RadioController::processInputNetStream()
