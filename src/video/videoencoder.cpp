@@ -18,7 +18,7 @@
 #include "videoencoder.h"
 #include <jpeglib.h>
 #include <setjmp.h>
-
+#include <QElapsedTimer>
 
 VideoEncoder::VideoEncoder(Logger *logger)
 {
@@ -38,7 +38,7 @@ void VideoEncoder::init(QString device_name)
     Q_UNUSED(device_name);
     if(_init)
         return;
-    //_logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
+    _logger->log(Logger::LogLevelInfo,"Using video device: " + device_name);
     _image_capture->init();
     _init = true;
 }
@@ -53,10 +53,14 @@ void VideoEncoder::deinit()
 
 void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encoded_size, unsigned long max_video_frame_size)
 {
+    _logger->log(Logger::LogLevelInfo, "4 ==== Start encode_jpeg");
+    QElapsedTimer timer;
+    timer.start();
     int len = 0;
     unsigned char *frame = _image_capture->get_frame(len);
     if(len < 1)
     {
+        _logger->log(Logger::LogLevelCritical,"4 ==== Encode jpeg len < 1 " );
         encoded_size = 0;
         return;
     }
@@ -77,7 +81,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_create_compress(&cinfo);
     jpeg_mem_dest(&cinfo, &outbuf, &encoded_size);
 
-        // jrow is a libjpeg row of samples array of 1 row pointer
+    // jrow is a libjpeg row of samples array of 1 row pointer
     cinfo.image_width = 320 & -1;
     cinfo.image_height = 240 & -1;
     cinfo.input_components = 3;
@@ -89,10 +93,17 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_set_quality(&cinfo, 10, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
+
+
+//    pactl load-module module-null-sink sink_name=FakeOutput
+//    pactl load-module module-null-source source_name=FakeMic
+
+
     unsigned char tmprowbuf[320 * 3];
 
     JSAMPROW row_pointer[1];
     row_pointer[0] = &tmprowbuf[0];
+
     while (cinfo.next_scanline < cinfo.image_height) {
         /*
         unsigned i, j;
@@ -114,11 +125,12 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     if(encoded_size > max_video_frame_size)
     {
         encoded_size = max_video_frame_size;
+        _logger->log(Logger::LogLevelCritical, "4 ==== encoded_size > max_video_frame_size");
     }
     memcpy(videobuffer, outbuf, encoded_size);
     jpeg_destroy_compress(&cinfo);
     delete[] frame;
-
+    _logger->log(Logger::LogLevelInfo, "4 ==== Done Encoding JPEG:  " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 

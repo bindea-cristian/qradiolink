@@ -15,7 +15,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "radiocontroller.h"
-
+#include <QElapsedTimer>
 
 RadioController::RadioController(Settings *settings, Logger *logger,
                                  RadioChannels *radio_channels, QObject *parent) :
@@ -489,6 +489,7 @@ void RadioController::flushRadioToVoipBuffer()
 
 bool RadioController::processMixerQueue()
 {
+    std::cout<<" ==== Process mixer queue" << std::endl;
     int maximum_frame_size = _settings->udp_enabled ? 1600 : 960;
     if(_audio_mixer_in->buffers_available(maximum_frame_size))
     {
@@ -542,6 +543,9 @@ bool RadioController::processMixerQueue()
 void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
                               int vad, bool radio_only)
 {
+    QElapsedTimer timer;
+    timer.start();
+    _logger->log(Logger::LogLevelInfo, "2 == RadioContoller TxAudio");
     /// first check the other places we need to send it
     if(_settings->vox_enabled)
     {
@@ -679,11 +683,16 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
         emit audioData(encoded_audio,packet_size);
     }
 
+    _logger->log(Logger::LogLevelInfo, "2 == END RadioContoller::TxAudio " + QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 
 void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
+    _logger->log(Logger::LogLevelInfo, "3 === Start processVideoFrame");
+    QElapsedTimer timer;
+    timer.start();
+
     if((_tx_mode != gr_modem_types::ModemTypeQPSKVideo) || (!_settings->tx_started))
     {
         delete[] audio_buffer;
@@ -740,6 +749,7 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
     }
 
     emit videoData(videobuffer,max_video_frame_size);
+     _logger->log(Logger::LogLevelInfo, "3 === Done Process video frame:  " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 void RadioController::processInputNetStream()
@@ -2007,6 +2017,12 @@ void RadioController::toggleRX(bool value)
         _modem->enableTimeDomain((bool)_settings->show_time_domain);
         _modem->setTimeDomainSampleRate(_settings->time_domain_sample_rate);
         _modem->setSampleWindow(_settings->time_domain_sample_speed);
+
+        //set gain range in ui
+
+//        _modem->get_gain_range();
+
+
         _modem->startRX(_settings->block_buffer_size);
         _mutex->unlock();
         const QMap<std::string,QVector<int>> rx_gains = _modem->getRxGainNames();
