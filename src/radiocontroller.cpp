@@ -1663,7 +1663,7 @@ void RadioController::receiveVideoData(unsigned char *data, int size)
     {
         return;
     }
-    QImage img (raw_output, 320,240, QImage::Format_RGB888);
+    QImage img (raw_output, 160,120, QImage::Format_RGB888);
     if(img.isNull())
     {
         delete[] raw_output;
@@ -1735,7 +1735,7 @@ void RadioController::processVoipVideoFrame(unsigned char *video_frame, int size
     {
         return;
     }
-    QImage img (raw_output, 320,240, QImage::Format_RGB888);
+    QImage img (raw_output, 160,120, QImage::Format_RGB888);
     if(img.isNull())
     {
         delete[] raw_output;

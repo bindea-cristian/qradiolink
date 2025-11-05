@@ -82,8 +82,8 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
     jpeg_mem_dest(&cinfo, &outbuf, &encoded_size);
 
     // jrow is a libjpeg row of samples array of 1 row pointer
-    cinfo.image_width = 320 & -1;
-    cinfo.image_height = 240 & -1;
+    cinfo.image_width = 160 & -1;
+    cinfo.image_height = 120 & -1;
     cinfo.input_components = 3;
     cinfo.in_color_space = JCS_RGB; //libJPEG expects YUV 3bytes, 24bit
     cinfo.jpeg_color_space = JCS_RGB;
@@ -99,7 +99,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
 //    pactl load-module module-null-source source_name=FakeMic
 
 
-    unsigned char tmprowbuf[320 * 3];
+    unsigned char tmprowbuf[160 * 3];
 
     JSAMPROW row_pointer[1];
     row_pointer[0] = &tmprowbuf[0];
@@ -117,7 +117,7 @@ void VideoEncoder::encode_jpeg(unsigned char *videobuffer, unsigned long &encode
             tmprowbuf[j + 5] = input[offset + i + 3]; // V (shared between pixels)
         }
         */
-        row_pointer[0] = &input[cinfo.next_scanline * 320 * 3];
+        row_pointer[0] = &input[cinfo.next_scanline * 160 * 3];
         jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 

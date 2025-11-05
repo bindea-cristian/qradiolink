@@ -17,7 +17,8 @@
 #include "imagecapture.h"
 #include <QElapsedTimer>
 #include <QCameraImageCapture>
-#define FRAME_SIZE 230400 // 320 x 240 x 3 (RGB)
+//#define FRAME_SIZE 230400 // 320 x 240 x 3 (RGB)
+#define FRAME_SIZE 56700 // 160 x 120 x 3
 
 ImageCapture::ImageCapture(Settings *settings, Logger *logger, QObject *parent) : QObject(parent)
 {
@@ -71,7 +72,7 @@ void ImageCapture::init()
 
     QObject::connect(_capture, &QCameraImageCapture::imageAvailable, this, &ImageCapture::process_image_available);
     QImageEncoderSettings encoding_settings;
-    encoding_settings.setResolution(320, 240);
+    encoding_settings.setResolution(160, 120);
     encoding_settings.setCodec("");
     encoding_settings.setQuality(QMultimedia::VeryLowQuality);
     _capture->setEncodingSettings(encoding_settings);
