@@ -59,6 +59,9 @@ private:
     bool _shutdown;
     bool _capturing;
     QMutex _mutex;
+
+    // Camera simulation - always enabled for testing
+    QImage _simulation_image;
 };
 
 #endif // IMAGECAPTURE_H

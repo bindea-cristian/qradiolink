@@ -47,42 +47,26 @@ void ImageCapture::init()
         return;
     }
     _mutex.unlock();
-    if (QCameraInfo::availableCameras().count() < 1)
+
+    // SIMULATION MODE - Load test image instead of using camera
+    QString simulation_path = "src/res/test_frame.jpg";
+    if (!_simulation_image.load(simulation_path))
     {
-            _logger->log(Logger::LogLevelCritical, QString("No available camera found"));
-            return;
+        _logger->log(Logger::LogLevelCritical, QString("Failed to load simulation image: %1").arg(simulation_path));
+        return;
     }
-    QCameraInfo camera_info = QCameraInfo::defaultCamera();
-    _camera = new QCamera(camera_info);
-    _camera->setCaptureMode(QCamera::CaptureStillImage);
-    _camera->exposure()->setAutoAperture();
-    _camera->exposure()->setAutoIsoSensitivity();
-    _camera->exposure()->setExposureMode(QCameraExposure::ExposureAuto);
-    _camera->exposure()->setManualShutterSpeed(0.009);
-    _capture = new QCameraImageCapture(_camera);
-    _capture->setBufferFormat(QVideoFrame::Format_RGB24);
-    _capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
 
+    // Ensure the image is the correct size and format
+    _simulation_image = _simulation_image.scaled(160, 120, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    _simulation_image = _simulation_image.convertToFormat(QImage::Format_RGB888);
 
-    QObject::connect(_capture, QOverload<int, QCameraImageCapture::Error, const QString &>::of(&QCameraImageCapture::error), this, [=](int id, QCameraImageCapture::Error error, const QString &errorString){
-        _logger->log(Logger::LogLevelCritical, "================ Capture img ERROR:  " + errorString);
-    });
+    // Prepare the video buffer with the simulation image
+    unsigned char *data = (unsigned char*)_simulation_image.bits();
+    _last_frame_length = _simulation_image.sizeInBytes();
+    memcpy(_videobuffer, data, _last_frame_length);
 
-    QObject::connect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
+    _logger->log(Logger::LogLevelInfo, QString("Camera simulation initialized with image size: %1 bytes").arg(_last_frame_length));
 
-    QObject::connect(_capture, &QCameraImageCapture::imageAvailable, this, &ImageCapture::process_image_available);
-    QImageEncoderSettings encoding_settings;
-    encoding_settings.setResolution(160, 120);
-    encoding_settings.setCodec("");
-    encoding_settings.setQuality(QMultimedia::VeryLowQuality);
-    _capture->setEncodingSettings(encoding_settings);
-    //QWidget *w = QApplication::activeWindow();
-    //_viewfinder = new QCameraViewfinder(w);
-    //_viewfinder->moveToThread(QCoreApplication::instance()->thread());
-    //_camera->setViewfinder(_viewfinder);
-    //_viewfinder->show();
-    //_viewfinder->raise();
-    _camera->start();
     _mutex.lock();
     _inited = true;
     _mutex.unlock();
@@ -101,32 +85,10 @@ void ImageCapture::deinit()
         _mutex.unlock();
         return;
     }
-    //_viewfinder->hide();
-    //delete _viewfinder;
-    _shutdown = true;
-    while(_capturing)
-    {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
-    }
 
-    _capture->cancelCapture();
-    QObject::disconnect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
-    _camera->stop();
-    while(1)
-    {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
-        if(_camera->state() != QCamera::State::ActiveState)
-            break;
-    }
-    _camera->unload();
-    while(1)
-    {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
-        if(_camera->state() == QCamera::State::UnloadedState)
-            break;
-    }
-    _capture->deleteLater();
-    _camera->deleteLater();
+    // SIMULATION MODE - Simple cleanup
+    _shutdown = true;
+    _simulation_image = QImage(); // Clear the simulation image
 
     _inited = false;
     _shutdown = false;
@@ -135,25 +97,18 @@ void ImageCapture::deinit()
 
 void ImageCapture::capture_image()
 {
-    _logger->log(Logger::LogLevelInfo, "6 ====== Start capture_image ");
-    QElapsedTimer timer;
-    timer.start();
+    _logger->log(Logger::LogLevelInfo, "6 ====== Start capture_image (simulation)");
     _mutex.lock();
-    if((!_inited) || (_shutdown) || (_capturing))
+    if((!_inited) || (_shutdown))
     {
         _logger->log(Logger::LogLevelCritical, "6 ====== CLOSING CAPTURE IMAGE....");
         _mutex.unlock();
         return;
     }
 
-    _logger->log(Logger::LogLevelInfo, "6 ====== CAPTURE IMAGE");
-    _capturing = true;
-    _camera->searchAndLock();
-    _capture->capture();
-    _camera->unlock();
-    _capturing = false;
+    // SIMULATION MODE - No actual capture needed, image is already loaded
+    _logger->log(Logger::LogLevelInfo, "6 ====== CAPTURE IMAGE (simulation) - returning pre-loaded frame");
     _mutex.unlock();
-    _logger->log(Logger::LogLevelInfo, "6 ====== End capture_image: " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 void ImageCapture::process_image_available(int id, const QVideoFrame &frame)
@@ -174,21 +129,22 @@ void ImageCapture::process_image(int id, QImage img)
 
 unsigned char* ImageCapture::get_frame(int &len)
 {
-    _logger->log(Logger::LogLevelInfo, "5 ===== Start get_frame");
+    _logger->log(Logger::LogLevelInfo, "5 ===== Start get_frame (simulation)");
     if(!_inited)
     {
         len = 0;
-        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error");
+        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error - not initialized");
         return nullptr;
     }
-    capture_image();
+
+    // SIMULATION MODE - Return pre-loaded frame data directly
     len = _last_frame_length;
     if(len == 0){
-        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error2");
+        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error - no simulation data");
         return nullptr;
     }
     unsigned char* frame = new unsigned char[FRAME_SIZE];
     memcpy(frame, _videobuffer, FRAME_SIZE*sizeof(unsigned char));
-    _logger->log(Logger::LogLevelInfo, "5 ===== End get_frame");
+    _logger->log(Logger::LogLevelInfo, "5 ===== End get_frame (simulation) - returning same frame");
     return frame;
 }
