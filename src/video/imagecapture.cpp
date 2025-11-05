@@ -63,10 +63,13 @@ void ImageCapture::init()
     _capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
 
 
-    QObject::connect(_capture, SIGNAL(error(int id, QCameraImageCapture::Error error, const QString &errorString)), this,
-                     SLOT(process_img_error(int id, QCameraImageCapture::Error error, const QString &errorString)), Qt::QueuedConnection);
+    QObject::connect(_capture, QOverload<int, QCameraImageCapture::Error, const QString &>::of(&QCameraImageCapture::error), this, [=](int id, QCameraImageCapture::Error error, const QString &errorString){
+        _logger->log(Logger::LogLevelCritical, "================ Capture img ERROR:  " + errorString);
+    });
+
     QObject::connect(_capture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(process_image(int,QImage)));
-    QObject::connect(_capture, SIGNAL(imageAvailable(int,QImage)), this, SLOT(process_image_available(int,QImage)));
+
+    QObject::connect(_capture, &QCameraImageCapture::imageAvailable, this, &ImageCapture::process_image_available);
     QImageEncoderSettings encoding_settings;
     encoding_settings.setResolution(320, 240);
     encoding_settings.setCodec("");
@@ -152,7 +155,7 @@ void ImageCapture::capture_image()
     _logger->log(Logger::LogLevelInfo, "6 ====== End capture_image: " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
-void ImageCapture::process_image_available(int id, QImage img)
+void ImageCapture::process_image_available(int id, const QVideoFrame &frame)
 {
     _logger->log(Logger::LogLevelInfo, QString("7 ======= Image AVAILABLE, WITH ID: %1").arg(id));
 }
