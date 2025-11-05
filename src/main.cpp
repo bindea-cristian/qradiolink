@@ -262,9 +262,9 @@ int main(int argc, char *argv[])
     delete telnet_server;
     delete udpclient;
     delete mumbleclient;
-    radio_channels->saveConfig();
+//    radio_channels->saveConfig();
     delete radio_channels;
-    settings->saveConfig();
+//    settings->saveConfig();
     delete settings;
     logger->log(Logger::LogLevelInfo, "Stopping qradiolink");
     delete logger;
