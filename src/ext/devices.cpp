@@ -36,39 +36,40 @@ int findSoapyDevices(const std::string &argStr, const bool sparse, QList<QString
        std::cout << "Could not open file: " << filePath.toStdString() << std::endl;
    }
 
-    const auto results = SoapySDR::Device::enumerate(argStr);
-    if (sparse)
-    {
-        std::vector<std::string> sparseResults;
-        for (size_t i = 0; i < results.size(); i++)
-        {
-            const auto it = results[i].find("label");
-            if (it != results[i].end()) sparseResults.push_back(it->second);
-            else sparseResults.push_back(SoapySDR::KwargsToString(results[i]));
-        }
-        std::sort(sparseResults.begin(), sparseResults.end());
-        for (size_t i = 0; i < sparseResults.size(); i++)
-        {
-            QString dev_str = QString("soapy=%1,").arg(i) + QString::fromStdString(
-                        SoapySDR::KwargsToString(results[i])).replace(" ", "");
-            devices.push_back(dev_str);
-        }
-    }
-    else
-    {
-        for (size_t i = 0; i < results.size(); i++)
-        {
-            std::cout << "Found device " << i << std::endl;
-            for (const auto &it : results[i])
-            {
-                std::cout << "  " << it.first << " = " << it.second << std::endl;
-            }
-            std::cout << std::endl;
-        }
-        if (results.empty()) std::cerr << "No devices found! " << argStr << std::endl;
-        else std::cout << std::endl;
-    }
-    return results.empty()?EXIT_FAILURE:EXIT_SUCCESS;
+//    const auto results = SoapySDR::Device::enumerate(argStr);
+//    if (sparse)
+//    {
+//        std::vector<std::string> sparseResults;
+//        for (size_t i = 0; i < results.size(); i++)
+//        {
+//            const auto it = results[i].find("label");
+//            if (it != results[i].end()) sparseResults.push_back(it->second);
+//            else sparseResults.push_back(SoapySDR::KwargsToString(results[i]));
+//        }
+//        std::sort(sparseResults.begin(), sparseResults.end());
+//        for (size_t i = 0; i < sparseResults.size(); i++)
+//        {
+//            QString dev_str = QString("soapy=%1,").arg(i) + QString::fromStdString(
+//                        SoapySDR::KwargsToString(results[i])).replace(" ", "");
+//            devices.push_back(dev_str);
+//        }
+//    }
+//    else
+//    {
+//        for (size_t i = 0; i < results.size(); i++)
+//        {
+//            std::cout << "Found device " << i << std::endl;
+//            for (const auto &it : results[i])
+//            {
+//                std::cout << "  " << it.first << " = " << it.second << std::endl;
+//            }
+//            std::cout << std::endl;
+//        }
+//        if (results.empty()) std::cerr << "No devices found! " << argStr << std::endl;
+//        else std::cout << std::endl;
+//    }
+//    return results.empty()?EXIT_FAILURE:EXIT_SUCCESS;
+   return EXIT_SUCCESS;
 }
 
 void findLimeDevices(QList<QString> &devices)
