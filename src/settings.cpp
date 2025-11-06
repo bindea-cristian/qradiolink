@@ -42,7 +42,7 @@ Settings::Settings(Logger *logger)
     rx_ctcss = 0.0;
     tx_ctcss = 0.0;
     ip_address = "";
-    rx_sample_rate = 2000000;
+    rx_sample_rate = 1920000;
     scan_step = 0;
     show_controls = 0;
     show_constellation = 0;
