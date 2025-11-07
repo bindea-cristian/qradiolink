@@ -144,6 +144,7 @@ private:
     void processReceivedData(unsigned char* received_data, uint64_t current_frame_type);
     void handleStreamEnd();
     int findSync(unsigned char bit);
+    void transmit(std::vector<unsigned char>* frames);
     void transmit(QVector<std::vector<unsigned char>*> frames);
     bool synchronize(int v_size, std::vector<unsigned char> *data);
 

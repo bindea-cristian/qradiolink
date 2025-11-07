@@ -545,7 +545,7 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
 {
     QElapsedTimer timer;
     timer.start();
-    _logger->log(Logger::LogLevelInfo, "2 == RadioContoller TxAudio");
+//    _logger->log(Logger::LogLevelInfo, "2 == RadioContoller TxAudio");
     /// first check the other places we need to send it
     if(_settings->vox_enabled)
     {
@@ -683,13 +683,13 @@ void RadioController::txAudio(short *audiobuffer, int audiobuffer_size,
         emit audioData(encoded_audio,packet_size);
     }
 
-    _logger->log(Logger::LogLevelInfo, "2 == END RadioContoller::TxAudio " + QString::number(timer.nsecsElapsed()) + "ns");
+//    _logger->log(Logger::LogLevelInfo, "2 == END RadioContoller::TxAudio " + QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 
 void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_size)
 {
-    _logger->log(Logger::LogLevelInfo, "3 === Start processVideoFrame");
+//    _logger->log(Logger::LogLevelInfo, "3 === Start processVideoFrame");
     QElapsedTimer timer;
     timer.start();
 
@@ -749,7 +749,7 @@ void RadioController::processVideoFrame(unsigned char *audio_buffer, int audio_s
     }
 
     emit videoData(videobuffer,max_video_frame_size);
-     _logger->log(Logger::LogLevelInfo, "3 === Done Process video frame:  " +  QString::number(timer.nsecsElapsed()) + "ns");
+//     _logger->log(Logger::LogLevelInfo, "3 === Done Process video frame:  " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 void RadioController::processInputNetStream()

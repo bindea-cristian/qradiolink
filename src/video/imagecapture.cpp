@@ -89,7 +89,7 @@ void ImageCapture::init()
 
 void ImageCapture::process_img_error(int id, QCameraImageCapture::Error error, const QString &errorString)
 {
-    _logger->log(Logger::LogLevelCritical, "Capture img ERROR:  " + errorString);
+//    _logger->log(Logger::LogLevelCritical, "Capture img ERROR:  " + errorString);
 }
 
 void ImageCapture::deinit()
@@ -134,60 +134,60 @@ void ImageCapture::deinit()
 
 void ImageCapture::capture_image()
 {
-    _logger->log(Logger::LogLevelInfo, "6 ====== Start capture_image ");
+//    _logger->log(Logger::LogLevelInfo, "6 ====== Start capture_image ");
     QElapsedTimer timer;
     timer.start();
     _mutex.lock();
     if((!_inited) || (_shutdown) || (_capturing))
     {
-        _logger->log(Logger::LogLevelCritical, "6 ====== CLOSING CAPTURE IMAGE....");
+//        _logger->log(Logger::LogLevelCritical, "6 ====== CLOSING CAPTURE IMAGE....");
         _mutex.unlock();
         return;
     }
 
-    _logger->log(Logger::LogLevelInfo, "6 ====== CAPTURE IMAGE");
+//    _logger->log(Logger::LogLevelCritical, "6 ====== CAPTURE IMAGE");
     _capturing = true;
     _camera->searchAndLock();
     _capture->capture();
     _camera->unlock();
     _capturing = false;
     _mutex.unlock();
-    _logger->log(Logger::LogLevelInfo, "6 ====== End capture_image: " +  QString::number(timer.nsecsElapsed()) + "ns");
+//    _logger->log(Logger::LogLevelCritical, "6 ====== End capture_image: " +  QString::number(timer.nsecsElapsed()) + "ns");
 }
 
 void ImageCapture::process_image_available(int id, const QVideoFrame &frame)
 {
-    _logger->log(Logger::LogLevelInfo, QString("7 ======= Image AVAILABLE, WITH ID: %1").arg(id));
+//    _logger->log(Logger::LogLevelCritical, QString("7 ======= Image AVAILABLE, WITH ID: %1").arg(id));
 }
 
 void ImageCapture::process_image(int id, QImage img)
 {
 //    Q_UNUSED(id);
-    _logger->log(Logger::LogLevelInfo, QString("8 ======== Image captured, now processing %1").arg(id));
+//    _logger->log(Logger::LogLevelCritical, QString("8 ======== Image captured, now processing %1").arg(id));
     img = img.convertToFormat(QImage::Format_RGB888);
     unsigned char *data = (unsigned char*)img.bits();
     _last_frame_length = img.sizeInBytes();
     memcpy(_videobuffer, data, _last_frame_length);
-    _logger->log(Logger::LogLevelInfo, QString("8 ======== Image captured, done processing lastframelen  %1 ").arg(_last_frame_length));
+//    _logger->log(Logger::LogLevelCritical, QString("8 ======== Image captured, done processing lastframelen  %1 ").arg(_last_frame_length));
 }
 
 unsigned char* ImageCapture::get_frame(int &len)
 {
-    _logger->log(Logger::LogLevelInfo, "5 ===== Start get_frame");
+//    _logger->log(Logger::LogLevelCritical, "5 ===== Start get_frame");
     if(!_inited)
     {
         len = 0;
-        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error");
+//        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error");
         return nullptr;
     }
     capture_image();
     len = _last_frame_length;
     if(len == 0){
-        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error2");
+//        _logger->log(Logger::LogLevelCritical, "5 ===== Get frame error2");
         return nullptr;
     }
     unsigned char* frame = new unsigned char[FRAME_SIZE];
     memcpy(frame, _videobuffer, FRAME_SIZE*sizeof(unsigned char));
-    _logger->log(Logger::LogLevelInfo, "5 ===== End get_frame");
+//    _logger->log(Logger::LogLevelInfo, "5 ===== End get_frame");
     return frame;
 }

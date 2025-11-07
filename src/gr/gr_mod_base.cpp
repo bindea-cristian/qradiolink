@@ -782,6 +782,12 @@ void gr_mod_base::stop()
 
 int gr_mod_base::set_data(std::vector<u_int8_t> *data)
 {
+    if (frames_sent == 50) {
+        _audio_source->flush();
+        _byte_source->flush();
+        frames_sent = 0;
+    }
+    frames_sent++;
     return _byte_source->set_data(data);
 }
 

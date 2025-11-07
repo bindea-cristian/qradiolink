@@ -903,9 +903,9 @@ void gr_modem::transmitM17Audio(unsigned char *data, int size)
 void gr_modem::transmitVideoData(unsigned char *data, int size)
 {
     std::vector<unsigned char> *one_frame = frame(data, size, FrameTypeVideo);
-    QVector<std::vector<unsigned char>*> frames;
-    frames.append(one_frame);
-    transmit(frames);
+//    QVector<std::vector<unsigned char>*> frames;
+//    frames.append(one_frame);
+    transmit(one_frame);
     delete[] data;
 }
 
@@ -977,6 +977,24 @@ std::vector<unsigned char>* gr_modem::frame(unsigned char *encoded_audio, int da
     return data;
 }
 
+void gr_modem::transmit(std::vector<unsigned char>* frames)
+{
+    if(!_gr_mod_base)
+    {
+        return;
+    }
+//    std::vector<unsigned char> *all_frames = new std::vector<unsigned char>;
+//    for (int i=0; i<frames.size();i++)
+//    {
+//        all_frames->insert( all_frames->end(), frames.at(i)->begin(), frames.at(i)->end() );
+//        frames[i]->clear();
+//        delete frames[i];
+//    }
+//    _gr_mod_base->set_data(all_frames);
+    _gr_mod_base->set_data(frames);
+
+}
+
 void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
 {
     if(!_gr_mod_base)
@@ -990,6 +1008,7 @@ void gr_modem::transmit(QVector<std::vector<unsigned char>*> frames)
         frames[i]->clear();
         delete frames[i];
     }
+//    _gr_mod_base->set_data(all_frames);
     _gr_mod_base->set_data(all_frames);
 
 }

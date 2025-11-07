@@ -143,6 +143,7 @@ private:
     gr_mod_dmr_sptr _dmr_mod;
 
 
+    int frames_sent = 0;
     int _samples_per_symbol;
     int _samp_rate;
     int _carrier_freq;
